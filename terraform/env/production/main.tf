@@ -81,3 +81,26 @@ module "vpc_setup" {
     Name        = "vpc-${local.env}"
   }
 }
+
+/* 
+Common setups (elb, s3, iam, etc)
+*/
+module "common_setup" {
+  source = "./../../modules/common/"
+  env    = local.env
+  corp   = local.corp
+
+  vpc_id                   = module.vpc_setup.vpc_id
+  available_zones          = module.vpc_setup.azs
+  private_subnets          = module.vpc_setup.private_subnets
+  public_subnets           = module.vpc_setup.public_subnets
+  database_subnets         = module.vpc_setup.database_subnets
+  database_subnet_group    = module.vpc_setup.database_subnet_group
+  elasticache_subnet_group = module.vpc_setup.database_subnet_group
+
+  lb_private_certificate_arn = ""
+  lb_public_certificate_arn  = ""
+
+  frontend_api_repository_url = aws_ecr_repository.service_frontend.repository_url
+
+}
